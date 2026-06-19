@@ -1,0 +1,17 @@
+*.log
+.DS_Store
+laravel-temp/.env
+laravel-temp/.env.backup
+laravel-temp/.env.production
+laravel-temp/.phpactor.json
+laravel-temp/.phpunit.result.cache
+laravel-temp/node_modules
+laravel-temp/public/build
+laravel-temp/public/hot
+laravel-temp/public/storage
+laravel-temp/storage/*.key
+laravel-temp/storage/pail
+laravel-temp/vendor
+laravel-temp/Homestead.json
+laravel-temp/Homestead.yaml
+Thumbs.db
