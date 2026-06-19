@@ -1139,6 +1139,8 @@ function switchPage(page) {
 function setup() {
   switchPage('lines');
 
+  const nbModal = document.getElementById('board-modal');
+  const nbHasAlpine = nbModal?.hasAttribute('x-data');
   const taskModalEl = document.getElementById('task-modal');
   if (!taskModalEl.hasAttribute('x-data')) {
     document.getElementById('confirm-task-btn').addEventListener('click', async () => {
@@ -1433,8 +1435,6 @@ function setup() {
   }
 
   const modalOverlays = document.querySelectorAll('.modal-overlay');
-  const nbModal = document.getElementById('board-modal');
-  const nbHasAlpine = nbModal?.hasAttribute('x-data');
   const mgModal = document.getElementById('manage-board-modal');
   const mgHasAlpine = mgModal?.hasAttribute('x-data');
   const taskModal = document.getElementById('task-modal');

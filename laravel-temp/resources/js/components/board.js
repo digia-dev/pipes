@@ -19,7 +19,11 @@ export default function (Alpine) {
       return Alpine.store('pipes').boards;
     },
     get columns() {
-      return Alpine.store('pipes').columns;
+      const c = Alpine.store('pipes').columns;
+      return Array.isArray(c) ? c : [];
+    },
+    get hasColumns() {
+      return this.columns.length > 0;
     },
     get activeBoard() {
       return Alpine.store('pipes').activeBoard;

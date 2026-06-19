@@ -21,6 +21,7 @@ export default function (Alpine) {
         pipes.token = res.token;
         pipes.user = res.user;
         pipes.isAdmin = res.user.role === 'admin';
+        if (window.state) { state.token = res.token; state.user = res.user; }
 
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
