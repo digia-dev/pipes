@@ -10,5 +10,5 @@ async function init() {
   checkDueDates();
   setInterval(loadNotifications, 30000);
   setInterval(checkDueDates, 300000);
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 }

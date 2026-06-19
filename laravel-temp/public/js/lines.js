@@ -641,8 +641,8 @@ async function postComment(taskId) {
           ${esc(f.original_name)}
         </a>`;
       }).join('');
-      lucide.createIcons();
-    }
+  if (window.lucide) lucide.createIcons();
+}
   }, 300);
   container.scrollTop = container.scrollHeight;
   await loadBoard();
