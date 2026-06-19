@@ -42,7 +42,7 @@ export default function (Alpine) {
       p.token = null;
       p.user = null;
       p.isAdmin = false;
-      if (window.state) { state.token = null; state.user = null; }
+      if (window.state) { window.state.token = null; window.state.user = null; }
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-overlay').style.display = 'flex';
     },

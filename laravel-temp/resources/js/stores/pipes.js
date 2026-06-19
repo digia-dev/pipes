@@ -15,6 +15,8 @@ export default function (Alpine) {
 
     // Selected task detail
     selectedTask: null,
+    newTaskAssigneeIds: [],
+    editTaskAssigneeIds: [],
     files: [],
     comments: [],
     todos: [],

@@ -62,7 +62,7 @@ export default function (Alpine) {
       if (!title) return;
       await this.$api(`/lines/tasks/${this.taskId}`, {
         method: 'PUT',
-        body: JSON.stringify({ title, description: this.desc, due_date: this.due }),
+        body: JSON.stringify({ title, description: this.desc, due_date: this.due, assignee_ids: this.assigneeIds }),
       });
       Alpine.store('modals').closeModal('card-detail-modal');
       if (window.loadBoard) loadBoard();

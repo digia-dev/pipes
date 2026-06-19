@@ -9,6 +9,7 @@ const state = {
   manageBoardColumns: [],
   currentPage: 'lines',
 };
+window.state = state;
 
 const filesState = {
   files: [],
@@ -28,3 +29,4 @@ const filesState = {
   expandedFolders: [],
   clipboard: { items: [], mode: null },
 };
+window.filesState = filesState;

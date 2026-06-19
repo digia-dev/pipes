@@ -72,6 +72,7 @@ function openNewTaskModal(columnId) {
   document.getElementById('nt-assignee-dd').style.display = 'none';
   if (typeof Alpine !== 'undefined') {
     Alpine.store('pipes').lastColumnId = columnId;
+    Alpine.store('pipes').newTaskAssigneeIds = [];
     const modal = document.getElementById('task-modal');
     if (modal.__x) {
       modal.__x.$data.title = '';
@@ -694,11 +695,14 @@ async function openCardDetail(taskId) {
   if (document.getElementById('card-detail-modal').hasAttribute('x-data')) {
     const alpineEl = document.getElementById('card-detail-modal');
     if (alpineEl.__x) {
+      const assigneeIds = (t.assignees || []).map(a => a.id);
+      if (!assigneeIds.length && t.assignee_id) assigneeIds.push(t.assignee_id);
       alpineEl.__x.$data.title = t.title;
       alpineEl.__x.$data.desc = t.description || '';
       alpineEl.__x.$data.due = t.due_date || '';
       alpineEl.__x.$data.taskId = taskId;
       alpineEl.__x.$data.canEdit = canEdit;
+      alpineEl.__x.$data.assigneeIds = assigneeIds;
     }
     openModal('card-detail-modal'); return;
   }
@@ -707,6 +711,7 @@ async function openCardDetail(taskId) {
   document.getElementById('edit-task-desc').value = t.description || '';
   state.editTaskAssigneeIds = (t.assignees || []).map(a => a.id);
   if (!state.editTaskAssigneeIds.length && t.assignee_id) state.editTaskAssigneeIds = [t.assignee_id];
+  if (window.Alpine) Alpine.store('pipes').editTaskAssigneeIds = state.editTaskAssigneeIds;
   renderEditAssigneePills();
   document.getElementById('edit-assignee-search').value = '';
   document.getElementById('edit-assignee-dd').style.display = 'none';
@@ -1139,9 +1144,17 @@ function switchPage(page) {
 function setup() {
   switchPage('lines');
 
+  const taskModalEl = document.getElementById('task-modal');
   const nbModal = document.getElementById('board-modal');
   const nbHasAlpine = nbModal?.hasAttribute('x-data');
-  const taskModalEl = document.getElementById('task-modal');
+  const mgModal = document.getElementById('manage-board-modal');
+  const mgHasAlpine = mgModal?.hasAttribute('x-data');
+  const taskModal = document.getElementById('task-modal');
+  const taskHasAlpine = taskModal?.hasAttribute('x-data');
+  const editModal = document.getElementById('card-detail-modal');
+  const editHasAlpine = editModal?.hasAttribute('x-data');
+  const modalOverlays = document.querySelectorAll('.modal-overlay');
+  const modalHasAlpine = Array.from(modalOverlays).some(el => el.hasAttribute('x-on:click'));
   if (!taskModalEl.hasAttribute('x-data')) {
     document.getElementById('confirm-task-btn').addEventListener('click', async () => {
       const title = document.getElementById('new-task-title').value.trim();
@@ -1434,14 +1447,6 @@ function setup() {
   });
   }
 
-  const modalOverlays = document.querySelectorAll('.modal-overlay');
-  const mgModal = document.getElementById('manage-board-modal');
-  const mgHasAlpine = mgModal?.hasAttribute('x-data');
-  const taskModal = document.getElementById('task-modal');
-  const taskHasAlpine = taskModal?.hasAttribute('x-data');
-  const editModal = document.getElementById('card-detail-modal');
-  const editHasAlpine = editModal?.hasAttribute('x-data');
-  const modalHasAlpine = Array.from(modalOverlays).some(el => el.hasAttribute('x-on:click'));
   if (!modalHasAlpine) {
     modalOverlays.forEach(el => {
       el.addEventListener('click', (e) => { if (e.target == el) closeModal(el.id); });
