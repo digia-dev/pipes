@@ -30,17 +30,11 @@ export default function (Alpine) {
     get activityLabels() {
       return { upload: 'uploaded', delete: 'deleted', rename: 'renamed', move: 'moved', share: 'shared', version: 'updated', create: 'created' };
     },
-    get activity() {
-      return Alpine.store('pipes').activity || [];
-    },
     get selectedFileIds() {
       return Alpine.store('pipes').selectedFileIds || [];
     },
     get searchQuery() {
       return Alpine.store('pipes').searchQuery || '';
-    },
-    get folderTree() {
-      return Alpine.store('pipes').folderTree || [];
     },
     get activeFolderId() {
       return Alpine.store('pipes').activeFolderId;
@@ -48,16 +42,56 @@ export default function (Alpine) {
     get folderHistory() {
       return Alpine.store('pipes').folderHistory || [];
     },
+
+    get folders() {
+      const f = Alpine.store('pipes').folders;
+      return Array.isArray(f) ? f : [];
+    },
+    get filesItems() {
+      const f = Alpine.store('pipes').filesItems;
+      return Array.isArray(f) ? f : [];
+    },
+    get folderTree() {
+      const f = Alpine.store('pipes').folderTree;
+      return Array.isArray(f) ? f : [];
+    },
+
+    get filteredFolders() {
+      let f = this.folders;
+      const q = this.searchQuery.toLowerCase().trim();
+      if (q) f = f.filter(x => (x.name || '').toLowerCase().includes(q));
+      const dir = this.sortDir === 'asc' ? 1 : -1;
+      return [...f].sort((a, b) => dir * (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+    },
+
+    get filteredFiles() {
+      let f = this.filesItems;
+      const q = this.searchQuery.toLowerCase().trim();
+      if (q) f = f.filter(x => (x.original_name || x.name || x.title || '').toLowerCase().includes(q));
+      const sort = this.sortBy;
+      const dir = this.sortDir === 'asc' ? 1 : -1;
+      return [...f].sort((a, b) => {
+        let va, vb;
+        if (sort === 'name') { va = (a.original_name || a.name || a.title || '').toLowerCase(); vb = (b.original_name || b.name || b.title || '').toLowerCase(); return dir * va.localeCompare(vb); }
+        if (sort === 'size') { va = a.size || 0; vb = b.size || 0; return dir * (va - vb); }
+        if (sort === 'created_at') { va = a.created_at || ''; vb = b.created_at || ''; return dir * va.localeCompare(vb); }
+        if (sort === 'owner') { va = (a.owner_name || '').toLowerCase(); vb = (b.owner_name || '').toLowerCase(); return dir * va.localeCompare(vb); }
+        return 0;
+      });
+    },
+
     get expandedFolders() {
-      return Alpine.store('pipes').expandedFolders || [];
+      const f = Alpine.store('pipes').expandedFolders;
+      return Array.isArray(f) ? f : [];
     },
     get flatFolderTree() {
       const result = [];
       const walk = (nodes, depth) => {
+        if (!Array.isArray(nodes)) return;
         for (const n of nodes) {
-          if (!n.id) continue;
+          if (!n || !n.id) continue;
           result.push({ ...n, depth });
-          if (n.children?.length && this.expandedFolders.includes(n.id)) {
+          if (Array.isArray(n.children) && n.children.length && this.expandedFolders.includes(n.id)) {
             walk(n.children, depth + 1);
           }
         }
@@ -66,12 +100,9 @@ export default function (Alpine) {
       return result;
     },
 
-    get filteredFolders() {
-      let f = Alpine.store('pipes').folders || [];
-      const q = this.searchQuery.toLowerCase().trim();
-      if (q) f = f.filter(x => (x.name || '').toLowerCase().includes(q));
-      const dir = this.sortDir === 'asc' ? 1 : -1;
-      return [...f].sort((a, b) => dir * (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+    get activity() {
+      const a = Alpine.store('pipes').activity;
+      return Array.isArray(a) ? a : [];
     },
 
     get filteredFiles() {
